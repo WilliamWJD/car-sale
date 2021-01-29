@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 
 import Home from '../pages/Home';
-import Dashboard from '../pages/Dashboard';
+import StoreCarsTab from './StoreCarsTab';
 
 
 const Routes:React.FC = () =>{
@@ -17,7 +17,7 @@ const Routes:React.FC = () =>{
                 }}
             >
                 <Stack.Screen name="Home" component={Home}/>
-                <Stack.Screen name="Dashboard" component={Dashboard}/>
+                <Stack.Screen name="StoreCarsTab" component={StoreCarsTab}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
