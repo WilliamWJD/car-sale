@@ -15,7 +15,7 @@ const StoreCarsTab: React.FC = () => {
                 style: {
                     elevation: 0,
                     shadowOpacity: 0,
-                    height: 64,
+                    height: 54,
                 },
                 tabStyle: {
                     flexDirection: 'row',
