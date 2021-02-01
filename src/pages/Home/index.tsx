@@ -14,7 +14,9 @@ const Home: React.FC = () => {
       <View style={styles.content}>
         <Text style={styles.title}>Conheça o novo Corolla 2020</Text>
         <Text style={styles.description}>O carro que irá proporcionar conforto e segurança para você e toda a sua família</Text>
+        
         <Image source={imgBackHome} style={styles.image}/>
+        
         <View style={styles.nextButtonContent}>
           <TouchableOpacity style={styles.nextButton} onPress={()=>navigation.navigate('StoreCarsTab')}>
             <MaterialIcons name="skip-next" color="#fff" size={25}/>
