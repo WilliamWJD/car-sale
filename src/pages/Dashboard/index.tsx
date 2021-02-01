@@ -39,21 +39,36 @@ const Dashboard: React.FC = () => {
       selected: false
     }
   ]);
+  const [modelSelected, setModelSelected] = useState<number>();
   const [cars, setCars] = useState<CarsProps[]>([]);
   const [showFilter, setShowFilter] = useState(false);
+  const [vehicle, setVehicle] = useState('');
 
   useEffect(() => {
     async function loadCars() {
-      const response = await api.get('/cars');
+      const response = await api.get('/cars',{
+        params:{
+          title_like:vehicle,
+          model:modelSelected
+        }
+      });
       setCars(response.data)
     }
     loadCars();
-  }, [])
+  }, [vehicle, modelSelected, modelCarSelected])
 
   const handledSelectedModelCar = useCallback((id: number) => {
-    const modelCarNewList = modelCarSelected.map((item) => item.id === id ? { ...item, selected: true } : { ...item, selected: false })
+    const modelCarNewList = modelCarSelected.map((item) => item.id === id ? { ...item, selected: !item.selected } : { ...item, selected:item.selected })
+
     setModelCarSelected(modelCarNewList)
-  }, [])
+
+    if(id === modelSelected){
+      setModelSelected(undefined)
+    }else{
+      setModelSelected(id)
+    }
+
+  }, [modelCarSelected])
 
   const handleEnabledFilter = useCallback(() => {
     setShowFilter(!showFilter)
@@ -72,6 +87,7 @@ const Dashboard: React.FC = () => {
                 placeholder="Digite o modelo do veículo"
                 style={styles.searchCarBoxInput}
                 placeholderTextColor="#BDC3C7"
+                onChangeText={(text)=>setVehicle(text)}
               />
             </View>
             <TouchableOpacity
