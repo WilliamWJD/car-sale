@@ -1,21 +1,15 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { MaterialIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Image, ImageProps } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { ScrollView, TextInput, TouchableOpacity } from 'react-native-gesture-handler';
 
 import api from '../../services/api';
-
-import toyotaImage from '../../assets/toyota.png';
-import hyundaiImage from '../../assets/hyundai.png';
-import hondaImage from '../../assets/honda.png';
-import bmwImage from '../../assets/bmw.png';
-
-import corollaImage from '../../assets/corolla.png';
+import { useNavigation } from '@react-navigation/native';
 
 interface modelsCars {
   id: number,
-  image: ImageProps,
-  selected: boolean,
+  image: string,
+  selected?: boolean,
 }
 
 interface CarsProps {
@@ -27,22 +21,13 @@ interface CarsProps {
 }
 
 const Dashboard: React.FC = () => {
-  const [modelCarSelected, setModelCarSelected] = useState<modelsCars[]>([
-    {
-      id: 1,
-      image: toyotaImage,
-      selected: false
-    },
-    {
-      id: 2,
-      image: hyundaiImage,
-      selected: false
-    }
-  ]);
+  const [modelCarSelected, setModelCarSelected] = useState<modelsCars[]>([]);
   const [modelSelected, setModelSelected] = useState<number>();
   const [cars, setCars] = useState<CarsProps[]>([]);
   const [showFilter, setShowFilter] = useState(false);
   const [vehicle, setVehicle] = useState('');
+
+  const navigation = useNavigation();
 
   useEffect(() => {
     async function loadCars() {
@@ -57,8 +42,22 @@ const Dashboard: React.FC = () => {
     loadCars();
   }, [vehicle, modelSelected, modelCarSelected])
 
+  useEffect(()=>{
+    async function loadManufacures(){
+      const response = await api.get('/manufacturers');
+      setModelCarSelected(response.data.map((model:modelsCars)=>{
+        return{
+          ...model,
+          selected:false,
+        }
+      }))
+    }
+
+    loadManufacures();
+  },[])
+
   const handledSelectedModelCar = useCallback((id: number) => {
-    const modelCarNewList = modelCarSelected.map((item) => item.id === id ? { ...item, selected: !item.selected } : { ...item, selected:item.selected })
+    const modelCarNewList = modelCarSelected.map((item) => item.id === id ? { ...item, selected: !item.selected } : { ...item, selected:false })
 
     setModelCarSelected(modelCarNewList)
 
@@ -134,7 +133,7 @@ const Dashboard: React.FC = () => {
                 onPress={() => handledSelectedModelCar(item.id)}
                 style={item.selected ? styles.modelCarItemSelected : styles.modelCarItem}
               >
-                <Image source={item.image} />
+                <Image source={{ uri:item.image }} style={styles.modelCarItemImage}/>
               </TouchableOpacity>
             ))}
           </ScrollView>
@@ -146,7 +145,11 @@ const Dashboard: React.FC = () => {
           showsVerticalScrollIndicator={false}
         >
           {cars.map(car => (
-            <TouchableOpacity style={styles.carsItem} key={car.id}>
+            <TouchableOpacity 
+              style={styles.carsItem} 
+              key={car.id}
+              onPress={()=>navigation.navigate('Detail')}
+            >
               <Image source={{ uri: car.imageBack }} style={styles.carsItemImage} />
 
               <View style={styles.carItemBoxDescription}>
@@ -232,6 +235,12 @@ export const styles = StyleSheet.create({
     height: 70,
     alignItems: 'center',
     justifyContent: 'center'
+  },
+
+  modelCarItemImage:{
+    width:70,
+    height:60,
+    resizeMode:'stretch'
   },
 
   cars: {

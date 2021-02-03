@@ -1,4 +1,27 @@
 {
+    "manufacturers":[
+        {
+            "id":1,
+            "title":"Toyota",
+            "image":"https://cdn.motor1.com/images/mkt/1ZK/s1/toyota3.png"
+        },
+        {
+            "id":2,
+            "title":"Hyundai",
+            "image":"https://logodownload.org/wp-content/uploads/2014/05/hyundai-logo-4.png"
+        },
+        {
+            "id":3,
+            "title":"Chevrolet",
+            "image":"https://upload.wikimedia.org/wikipedia/pt/3/34/Chevrolet_logo.png"
+        },
+        {
+            "id":4,
+            "title":"volkswagen",
+            "image":"https://logodownload.org/wp-content/uploads/2014/02/volkswagen-vw-logo-1.png"
+        }
+    ],
+
     "cars":[
         {
             "id":1,

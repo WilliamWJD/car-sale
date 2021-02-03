@@ -6,7 +6,7 @@ const Stack = createStackNavigator();
 
 import Home from '../pages/Home';
 import StoreCarsTab from './StoreCarsTab';
-
+import Detail from '../pages/Detail';
 
 const Routes:React.FC = () =>{
     return(
@@ -18,6 +18,7 @@ const Routes:React.FC = () =>{
             >
                 <Stack.Screen name="Home" component={Home}/>
                 <Stack.Screen name="StoreCarsTab" component={StoreCarsTab}/>
+                <Stack.Screen name="Detail" component={Detail}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
