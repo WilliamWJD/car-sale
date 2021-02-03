@@ -4,7 +4,12 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const Header: React.FC = () => {
+interface HeaderProps{
+  handleFavorite():void;
+  favoriteEnabled?:boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ handleFavorite, favoriteEnabled }) => {
   const navigation = useNavigation();
 
   const goBack = useCallback(()=>{
@@ -17,7 +22,9 @@ const Header: React.FC = () => {
             <MaterialIcons name="keyboard-arrow-left" color="#2F3640" size={40}/>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Detalhe</Text>
-          <MaterialIcons name="favorite" color="#FF4757" size={25}/>
+          <TouchableOpacity onPress={handleFavorite}>
+            <MaterialIcons name="favorite" color={favoriteEnabled ? "#FF4757" : "#ccc"} size={25}/>
+          </TouchableOpacity>
       </View>
   )
 }

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { MaterialIcons, Ionicons} from '@expo/vector-icons';
 import { useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Header from '../../components/Header';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
@@ -40,6 +41,7 @@ interface ImagesProps{
 const Detail: React.FC = () => {
   const [detail, setDetail] = useState<DetailProps>({} as DetailProps)
   const [imageView, setImageView] = useState<ImagesProps>({} as ImagesProps);
+  const [favoriteEnabled, setFavoriteEnabled] = useState(false);
 
   const route = useRoute() ;
 
@@ -50,14 +52,51 @@ const Detail: React.FC = () => {
 
       setDetail(response.data)
       setImageView(response.data.images[0])
+
+      // FavoriteAsynStorage
+      const favoriteCar = await AsyncStorage.getItem('@storage_cars');
+      if(favoriteCar !== null){
+        const findCar = JSON.parse(favoriteCar).find((item:DetailProps)=>item.id === response.data.id);
+        if(findCar){
+          setFavoriteEnabled(true)
+        }
+      }
     } 
 
     loadDetail();
-  },[])
+  },[favoriteEnabled])
 
   const selectedImageView = useCallback((image: ImagesProps)=>{
     setImageView(image)
   },[])
+
+  const handleContact = useCallback(()=>{},[])
+
+  const handledFavorite = useCallback( async () =>{
+    try{
+      const response = await AsyncStorage.getItem('@storage_cars');
+
+      if(response !== null){
+        const findCar = JSON.parse(response).find((item:DetailProps)=>item.id === detail.id);
+
+        if(findCar){
+          const filterCars = JSON.parse(response).filter((item:DetailProps)=>item.id !== detail.id)
+          console.log(filterCars)
+          let favoriteStorageJson = [...filterCars]
+          await AsyncStorage.setItem('@storage_cars', JSON.stringify(favoriteStorageJson))
+          setFavoriteEnabled(false)
+        }else{
+          let favoriteStorageJson = [...JSON.parse(response), detail]
+          await AsyncStorage.setItem('@storage_cars', JSON.stringify(favoriteStorageJson))
+          setFavoriteEnabled(true)
+        }
+      }else{
+        await AsyncStorage.setItem('@storage_cars', JSON.stringify([detail]))
+      }
+    }catch(err){
+      console.log(err.message);
+    }
+  },[detail])
 
   if(!detail){
     return(
@@ -67,7 +106,10 @@ const Detail: React.FC = () => {
 
   return(
     <View style={styles.container}>
-      <Header/>
+      <Header
+        handleFavorite={handledFavorite}
+        favoriteEnabled={favoriteEnabled}
+      />
       
       <ScrollView
         showsHorizontalScrollIndicator={false}
