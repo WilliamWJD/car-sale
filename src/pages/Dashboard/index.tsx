@@ -148,7 +148,9 @@ const Dashboard: React.FC = () => {
             <TouchableOpacity 
               style={styles.carsItem} 
               key={car.id}
-              onPress={()=>navigation.navigate('Detail')}
+              onPress={()=>navigation.navigate('Detail',{
+                id:car.id
+              })}
             >
               <Image source={{ uri: car.imageBack }} style={styles.carsItemImage} />
 

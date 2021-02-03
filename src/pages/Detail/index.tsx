@@ -1,14 +1,69 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, Text, Image } from 'react-native';
 import { MaterialIcons, Ionicons} from '@expo/vector-icons';
+import { useRoute } from '@react-navigation/native';
 
 import Header from '../../components/Header';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 
 import volanteImage from '../../assets/volante.png';
 import cdImage from '../../assets/cd.png';
+import api from '../../services/api';
+
+interface DetailProps{
+  id:number,
+  model:number,
+  imageBack:string;
+  title:string;
+  price:number;
+  note:number;
+  year:string;
+  km:number;
+  cambio:string;
+  description:string;
+  description2:string;
+  images:Array<{
+    id:number;
+    image:string;
+  }>
+}
+
+interface ParamsProps{
+  id:number;
+}
+
+interface ImagesProps{
+  id:number;
+  image:string;
+}
 
 const Detail: React.FC = () => {
+  const [detail, setDetail] = useState<DetailProps>({} as DetailProps)
+  const [imageView, setImageView] = useState<ImagesProps>({} as ImagesProps);
+
+  const route = useRoute() ;
+
+  useEffect(()=>{
+    async function loadDetail(){
+      const params = route.params as ParamsProps;
+      const response = await api.get(`/cars/${params.id}`);
+
+      setDetail(response.data)
+      setImageView(response.data.images[0])
+    } 
+
+    loadDetail();
+  },[])
+
+  const selectedImageView = useCallback((image: ImagesProps)=>{
+    setImageView(image)
+  },[])
+
+  if(!detail){
+    return(
+      <Text>Carregando</Text>
+    )
+  }
 
   return(
     <View style={styles.container}>
@@ -18,54 +73,62 @@ const Detail: React.FC = () => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.carTitle}>
-          <Text style={styles.carTitleText}>Toyota SW4 2021</Text>
+          <Text style={styles.carTitleText}>{detail.title}</Text>
           <View style={styles.carTitleNoteBox}>
             <MaterialIcons name="star-rate" color="#FFA502" size={25}/>
-            <Text style={styles.carTitleNoteBoxText}>5,0</Text>
+            <Text style={styles.carTitleNoteBoxText}>{detail.note}</Text>
           </View>
         </View>
 
         <View style={styles.boxImagePrimary}>
-          <Image style={styles.boxImagePrimaryImage} source={{ uri:'https://revistacarro.com.br/wp-content/uploads/2020/11/toyota-sw4-2021-srx-2.jpg' }}/>
+          <Image style={styles.boxImagePrimaryImage} source={{ uri: imageView.image }}/>
         
-          <View style={styles.boxImages}>
-            <Image style={styles.boxImagesImage} source={{ uri:'https://www.autossegredos.com.br/wp-content/uploads/2020/11/toyota-sw4-2021-1.jpg' }}/>
-            <Image style={styles.boxImagesImage} source={{ uri:'https://www.autossegredos.com.br/wp-content/uploads/2020/11/toyota-sw4-2021-1.jpg' }}/>
-            <Image style={styles.boxImagesImage} source={{ uri:'https://www.autossegredos.com.br/wp-content/uploads/2020/11/toyota-sw4-2021-1.jpg' }}/>
-            <Image style={styles.boxImagesImage} source={{ uri:'https://www.autossegredos.com.br/wp-content/uploads/2020/11/toyota-sw4-2021-1.jpg' }}/>
-          </View>
+          <ScrollView 
+            showsVerticalScrollIndicator={false} 
+            horizontal={true} 
+            style={styles.boxImages}
+          >
+            {detail.images?.map(image=>(
+              <TouchableOpacity key={image.id} onPress={()=>selectedImageView(image)}>
+                <Image 
+                  style={[imageView.id === image.id ? styles.boxImagesImageSelected : styles.boxImagesImage]} 
+                  source={{ uri:image.image }}
+                />
+              </TouchableOpacity>
+            ))}
+          </ScrollView >
         </View>
         
         <View style={styles.boxDetailCar}>
           <View style={styles.boxDetailItem}>
             <Text style={styles.boxDetailItemTitle}>Ano</Text>
-            <Text style={styles.boxDetailItemValue}>2020/2021</Text>
+            <Text style={styles.boxDetailItemValue}>{detail.year}</Text>
           </View>
           
           <View style={styles.separator}/>
 
           <View style={styles.boxDetailItem}>
             <Text style={styles.boxDetailItemTitle}>KM</Text>
-            <Text style={styles.boxDetailItemValue}>250</Text>
+            <Text style={styles.boxDetailItemValue}>{detail.km}</Text>
           </View>
 
           <View style={styles.separator}/>
 
           <View style={styles.boxDetailItem}>
             <Text style={styles.boxDetailItemTitle}>Cambio</Text>
-            <Text style={styles.boxDetailItemValue}>Automático</Text>
+            <Text style={styles.boxDetailItemValue}>{detail.cambio}</Text>
           </View>
         </View>
 
         <View style={styles.boxDescription}>
           <View style={styles.boxDescription1}>
             <Image style={styles.boxDescription1Image} source={volanteImage}/>
-            <Text style={styles.boxDescription1Text}>ar-condicionado, direção hidráulica, travas elétricas, retrovisores elétricos, câmbio automático, piloto automático, direção elétrica, volante com regulagem de altura</Text>
+            <Text style={styles.boxDescription1Text}>{detail.description}</Text>
           </View>
 
           <View style={styles.boxDescription2}>
             <Image style={styles.boxDescription1Image} source={cdImage}/>
-            <Text style={styles.boxDescription1Text}> Kit Multimídia, entrada USB, rádio FM/AM</Text>
+            <Text style={styles.boxDescription1Text}>{detail.description2}</Text>
           </View>
         </View>
 
@@ -120,6 +183,15 @@ const styles = StyleSheet.create({
   boxImages:{
     marginTop:14,
     flexDirection:'row',
+    marginHorizontal:10
+  },
+
+  boxImagesImageSelected:{
+    width:78,
+    height:52,
+    marginRight:10,
+    borderRadius:5,
+    opacity:1
   },
 
   boxImagesImage:{
@@ -127,7 +199,7 @@ const styles = StyleSheet.create({
     height:52,
     marginRight:10,
     borderRadius:5,
-    opacity:0.6
+    opacity:0.3
   },
 
   boxDetailCar:{
