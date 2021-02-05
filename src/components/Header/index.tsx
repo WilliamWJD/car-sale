@@ -5,11 +5,13 @@ import { useNavigation } from '@react-navigation/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 interface HeaderProps{
-  handleFavorite():void;
+  headerTitle:string;
+  handleFavorite?():void;
   favoriteEnabled?:boolean;
+  favoriteButtonEnabled?:boolean
 }
 
-const Header: React.FC<HeaderProps> = ({ handleFavorite, favoriteEnabled }) => {
+const Header: React.FC<HeaderProps> = ({ headerTitle, handleFavorite, favoriteEnabled, favoriteButtonEnabled }) => {
   const navigation = useNavigation();
 
   const goBack = useCallback(()=>{
@@ -21,10 +23,12 @@ const Header: React.FC<HeaderProps> = ({ handleFavorite, favoriteEnabled }) => {
           <TouchableOpacity onPress={goBack}>
             <MaterialIcons name="keyboard-arrow-left" color="#2F3640" size={40}/>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Detalhe</Text>
-          <TouchableOpacity onPress={handleFavorite}>
-            <MaterialIcons name="favorite" color={favoriteEnabled ? "#FF4757" : "#ccc"} size={25}/>
-          </TouchableOpacity>
+          <Text style={[styles.headerTitle, !favoriteButtonEnabled && { flex:1, textAlign:'center' }]}>{headerTitle}</Text>
+          {favoriteButtonEnabled && (
+            <TouchableOpacity onPress={handleFavorite}>
+              <MaterialIcons name="favorite" color={favoriteEnabled ? "#FF4757" : "#ccc"} size={25}/>
+            </TouchableOpacity>
+          )}
       </View>
   )
 }

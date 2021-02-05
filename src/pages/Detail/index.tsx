@@ -107,8 +107,10 @@ const Detail: React.FC = () => {
   return(
     <View style={styles.container}>
       <Header
+        headerTitle="Detalhe"
         handleFavorite={handledFavorite}
         favoriteEnabled={favoriteEnabled}
+        favoriteButtonEnabled={true}
       />
       
       <ScrollView
