@@ -22,6 +22,10 @@ Trata-se de um marketplace de venda de carros, nesse app é possível filtrar ca
 - Faça commit das suas alterações: `git commit -m 'feat: Minha nova feature'`;
 - Faça push para a sua branch: `git push origin minha-feature`.
 
+## :memo: Licença
+
+Esse projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE.md) para mais detalhes.
+
 ---
 
 Desenvolvido por [William José Dias!](https://github.com/WilliamWJD)
