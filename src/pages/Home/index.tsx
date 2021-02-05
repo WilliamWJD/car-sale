@@ -21,7 +21,7 @@ const Home: React.FC = () => {
           <TouchableOpacity style={styles.nextButton} onPress={()=>navigation.navigate('StoreCarsTab')}>
             <MaterialIcons name="skip-next" color="#fff" size={25}/>
           </TouchableOpacity>
-          <Text style={styles.nextButtonText}>Visite nossa lója</Text>
+          <Text style={styles.nextButtonText}>Visite nossa loja</Text>
         </View>
       </View>
     </View>
